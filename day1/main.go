@@ -8,6 +8,26 @@ import (
 	"strconv"
 )
 
+type top_three [3]int
+
+func (t *top_three) add(a int) {
+	i := 0
+	for ; i < 3; i++ {
+		if a > t[i] {
+			break
+		}
+	}
+	for ; i < 3; i++ {
+		temp := t[i]
+		t[i] = a
+		a = temp
+	}
+}
+
+func (t top_three) String() string {
+	return fmt.Sprintf("%d\t%d\t%d", t[0], t[1], t[2])
+}
+
 func main() {
 	if len(os.Args) == 1 {
 		log.Fatal("Invalid # of arg's")
@@ -19,16 +39,15 @@ func main() {
 	}
 	defer file.Close()
 
-	most, total := 0, 0
+	top := new(top_three)
+	total := 0
 	line_num := 1
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
 
 		if len(line) == 0 {
-			if total > most {
-				most = total
-			}
+			top.add(total)
 			total = 0
 		} else {
 			curr, err := strconv.Atoi(line)
@@ -44,10 +63,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if total > most {
-		most = total
-		total = 0
-	}
+	top.add(total)
 
-	fmt.Printf("Max: %d\n", most)
+	fmt.Printf("Max: %s\n", top)
 }
