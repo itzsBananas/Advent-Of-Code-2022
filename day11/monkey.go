@@ -6,7 +6,7 @@ import (
 )
 
 const innerVerbose = false
-const divisor = 3
+const divisor = 1
 
 type test struct {
 	divisor     int
@@ -22,8 +22,8 @@ type monkey struct {
 }
 
 type monkeyGame struct {
-	monkeys []*monkey
-	divisor int
+	monkeys          []*monkey
+	minCommonDivisor int
 }
 
 func (g *monkeyGame) PlayRound() {
@@ -41,7 +41,7 @@ func (g *monkeyGame) playTurn(i int) {
 	m := slice[i]
 	for _, item := range m.items {
 		opLevel := m.op(item)
-		reliefLevel := opLevel / divisor
+		reliefLevel := opLevel % g.minCommonDivisor / divisor
 		isDivisble := reliefLevel%m.divisor == 0
 
 		var nextMonkey int

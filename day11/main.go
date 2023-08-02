@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-const outerVerbose = true
+const outerVerbose = false
 
 type operate func(old int) int
 
@@ -84,6 +84,7 @@ func newGenerator(fileName string) <-chan [paragraphSize]string {
 
 func initMonkeys(ch <-chan [paragraphSize]string) monkeyGame {
 	monkeys := make([]*monkey, 0)
+	minDivisor := 1
 	for para := range ch {
 		items := processItemLine(trimLine(para[1]))
 		op := processOpLine(trimLine(para[2]))
@@ -92,9 +93,12 @@ func initMonkeys(ch <-chan [paragraphSize]string) monkeyGame {
 		falseMonkey := processNextMonkeyLine(trimLine(para[5]))
 
 		monkeys = append(monkeys, NewMonkey(items, op, div, trueMonkey, falseMonkey))
+		minDivisor *= div
 	}
 	// part a
-	return monkeyGame{monkeys: monkeys, divisor: 3}
+	// return monkeyGame{monkeys: monkeys, divisor: 3}
+	// part b
+	return monkeyGame{monkeys: monkeys, minCommonDivisor: minDivisor}
 }
 
 func trimLine(str string) string {
